@@ -64,7 +64,7 @@ let _lastStrategyData = null;
 // 전략 선택을 취소했을 때 백테스트 결과 카드를 숨기고 차트를 기본 상태로 되돌리는 함수입니다.
 function resetBacktestCard() {
     const card = document.getElementById("backtestCard");
-    if (card) card.style.display = "none";
+    if (card) card.style.visibility = "hidden";
     const oneLiner = document.getElementById("strategyOneLinerText");
     if (oneLiner) { oneLiner.textContent = ""; oneLiner.style.visibility = "hidden"; }
     _lastStrategyData = null;
@@ -98,7 +98,7 @@ function getCurrentChartType() {
 
 // 서버에서 계산된 백테스트 결과 데이터를 우측 카드 UI에 반영하는 함수입니다.
 function updateBacktestCard(data) {
-    document.getElementById("backtestCard").style.display = "";
+    document.getElementById("backtestCard").style.visibility = "";
     const profit = data.total_profit;
     const profitEl = document.getElementById("bt-profit");
     

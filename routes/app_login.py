@@ -24,7 +24,7 @@ verification_codes = {}
 def login_page():
     # 이미 세션이 있으면 메인 페이지로 리다이렉트
     if "user_id" in session:
-        return redirect(url_for("index"))
+        return redirect(url_for("home.index"))
     return render_template("index_login.html")
 
 
@@ -55,7 +55,7 @@ def login():
         session['avatar'] = user.get('avatar') or '🧑‍💼'  # 아바타 없으면 기본값 사용
         session['user_id'] = user['id']
 
-        return redirect(url_for("index"))
+        return redirect(url_for("home.index"))
 
     # 로그인 실패 시 에러 메시지와 함께 로그인 페이지 재렌더링
     return render_template(

@@ -9,9 +9,37 @@
 -->
 
 {% macro chart_toggle(chart_id, title, subtitle, chart_data, line_label='ETF 종가', candle_label='ETF 가격', height='400px') %}
-<div class="chart-card" style="background:#fff; border-radius:16px; padding:20px;">
-    
+<div class="chart-card" style="background:#fff; border-radius:16px; padding:0px 20px 20px 20px;">
+
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+        {% if not title %}
+        <!-- 백테스팅 결과: 분석하기 버튼 오른쪽 인라인 -->
+        <div id="backtestCard" style="visibility:hidden;">
+            <div class="d-flex align-items-center gap-2">
+                <div class="rounded-3 px-2 py-1 text-center" style="background:#f8f9fa; min-width:90px;">
+                    <div class="text-muted" style="font-size:.68rem;">백테스팅 수익률</div>
+                    <div id="bt-profit" class="fw-bold" style="font-size:.9rem;">-</div>
+                </div>
+                <div class="rounded-3 px-2 py-1 text-center" style="background:#f8f9fa; min-width:60px;">
+                    <div class="text-muted" style="font-size:.68rem;">승률</div>
+                    <div id="bt-winrate" class="fw-bold" style="font-size:.9rem;">-</div>
+                </div>
+                <div class="rounded-3 px-2 py-1 text-center" style="background:#f8f9fa; min-width:60px;">
+                    <div class="text-muted" style="font-size:.68rem;">거래 횟수</div>
+                    <div id="bt-count" class="fw-bold" style="font-size:.9rem;">-</div>
+                </div>
+                <div class="rounded-3 px-2 py-1 text-center" style="background:#f8f9fa; min-width:130px;">
+                    <div class="text-muted" style="font-size:.68rem;">시드 1,000만원 → 최종</div>
+                    <div id="bt-final" class="fw-bold" style="font-size:.9rem;">-</div>
+                </div>
+            </div>
+        </div>
+            <!-- 전략 설명 한 줄: 고정 높이로 차트 안 밀림 -->
+        <div style="height:1.4rem; margin-bottom:4px;">
+            <span id="strategyOneLinerText" class="text-muted" style="font-size:.78rem; visibility:hidden;"></span>
+        </div>
+        {% endif %}
+
         <div>
             {% if title %}
             <h2 class="section-title">{{ title }}</h2>

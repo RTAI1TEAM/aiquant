@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Blueprint, Flask, render_template, session
+from flask import Blueprint, render_template, session
 
 from database import get_conn
 from routes.log_card import get_yesterday_trade_summary
