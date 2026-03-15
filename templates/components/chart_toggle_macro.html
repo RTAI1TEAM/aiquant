@@ -1,11 +1,50 @@
+<!--
+차트 전환 매크로 정의
+매개변수:
+- chart_id: 캔버스 ID (페이지 내 유일해야 함)
+- title/subtitle: 차트 상단 제목 및 부제목
+- chart_data: 서버에서 전달받은 차트 데이터 (JSON 변환용)
+- line_label/candle_label: 차트 타입별 범례 이름
+- height: 차트 높이 설정
+-->
+
 {% macro chart_toggle(chart_id, title, subtitle, chart_data, line_label='ETF 종가', candle_label='ETF 가격', height='400px') %}
-<div class="chart-card" style="background:#fff; border-radius:16px; padding:20px;">
+<div class="chart-card" style="background:#fff; border-radius:16px; padding:0px 20px 20px 20px;">
+
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:12px;">
+        {% if not title %}
+        <!-- 백테스팅 결과: 분석하기 버튼 오른쪽 인라인 -->
+        <div id="backtestCard" style="visibility:hidden;">
+            <div class="d-flex align-items-center gap-2">
+                <div class="rounded-3 px-2 py-1 text-center" style="background:#f8f9fa; min-width:90px;">
+                    <div class="text-muted" style="font-size:.68rem;">백테스팅 수익률</div>
+                    <div id="bt-profit" class="fw-bold" style="font-size:.9rem;">-</div>
+                </div>
+                <div class="rounded-3 px-2 py-1 text-center" style="background:#f8f9fa; min-width:60px;">
+                    <div class="text-muted" style="font-size:.68rem;">승률</div>
+                    <div id="bt-winrate" class="fw-bold" style="font-size:.9rem;">-</div>
+                </div>
+                <div class="rounded-3 px-2 py-1 text-center" style="background:#f8f9fa; min-width:60px;">
+                    <div class="text-muted" style="font-size:.68rem;">거래 횟수</div>
+                    <div id="bt-count" class="fw-bold" style="font-size:.9rem;">-</div>
+                </div>
+                <div class="rounded-3 px-2 py-1 text-center" style="background:#f8f9fa; min-width:130px;">
+                    <div class="text-muted" style="font-size:.68rem;">시드 1,000만원 → 최종</div>
+                    <div id="bt-final" class="fw-bold" style="font-size:.9rem;">-</div>
+                </div>
+            </div>
+        </div>
+            <!-- 전략 설명 한 줄: 고정 높이로 차트 안 밀림 -->
+        <div style="height:1.4rem; margin-bottom:4px;">
+            <span id="strategyOneLinerText" class="text-muted" style="font-size:.78rem; visibility:hidden;"></span>
+        </div>
+        {% endif %}
+
         <div>
             {% if title %}
             <h2 class="section-title">{{ title }}</h2>
             {% endif %}
-            {%if subtitle %}
+            {% if subtitle %}
             <p class="section-subtitle">최근 ETF 종가 흐름</p>
             {% endif %}
         </div>
@@ -32,15 +71,22 @@
 </div>
 
 <script>
+/**
+ * 페이지 로드 시 차트 데이터 초기화 및 기본 차트 출력
+ */
 document.addEventListener("DOMContentLoaded", function () {
+    // 전역 변수 window.chartRawData에 차트 설정값 저장 (JS 파일에서 접근 가능하도록)
     window.chartRawData = window.chartRawData || {};
     window.chartRawData["{{ chart_id }}"] = {
-        raw: {{ chart_data | tojson }},
+        raw: {{ chart_data | tojson }}, // 서버 데이터를 JSON 형식으로 안전하게 변환
         lineLabel: "{{ line_label }}",
         candleLabel: "{{ candle_label }}"
     };
 
-    switchChart("{{ chart_id }}", "candle");
+    // 초기 실행 시 'candle' 타입으로 차트 렌더링 시작
+    if (typeof switchChart === "function") {
+        switchChart("{{ chart_id }}", "candle");
+    }
 });
 </script>
 {% endmacro %}
