@@ -1,17 +1,15 @@
-"""
-services/ai_analysis.py — AI 분석 서비스
+# services/ai_analysis.py — AI 분석 서비스
 
-[ 역할 ]
-  네이버 뉴스 수집 → Gemini AI 분석 → DB 저장 흐름을 담당합니다.
+# [ 역할 ]
+#   네이버 뉴스 수집 → Gemini AI 분석 → DB 저장 흐름을 담당합니다.
 
-[ 호출 흐름 ]
-  daily_update.py (배치)
-      └─ update_sector_ai_analysis()    : 업종 전체 뉴스 분석
-      └─ update_all_stocks_ai_analysis(): 전 종목 뉴스 분석
+# [ 호출 흐름 ]
+#   daily_update.py (배치)
+#       └─ update_sector_ai_analysis()    : 업종 전체 뉴스 분석
+#       └─ update_all_stocks_ai_analysis(): 전 종목 뉴스 분석
 
-  routes/stock_detail.py (웹 요청)
-      └─ get_db_or_api_stock_news()     : 종목 AI 분석 결과 조회 (DB 우선, 없으면 실시간)
-"""
+#   routes/stock_detail.py (웹 요청)
+#       └─ get_db_or_api_stock_news()     : 종목 AI 분석 결과 조회 (DB 우선, 없으면 실시간)
 
 import json
 import time
@@ -27,14 +25,11 @@ client   = genai.Client(api_key=GEMINI_API_KEY)
 
 
 def get_live_analysis(stock_name):
-    """
-    [실시간] 네이버 뉴스 3개를 가져와 Gemini AI로 분석합니다.
-
-    배치가 실패해 DB에 데이터가 없을 때만 직접 호출합니다.
-
-    Returns:
-        news_list, score, ai_news
-    """
+    # [실시간] 네이버 뉴스 3개를 가져와 Gemini AI로 분석합니다.
+    # 배치가 실패해 DB에 데이터가 없을 때만 직접 호출합니다.
+    # Returns:
+    #     news_list, score, ai_news
+    
     headers = {
         "X-Naver-Client-Id":     NAVER_CLIENT_ID,
         "X-Naver-Client-Secret": NAVER_CLIENT_SECRET,
@@ -81,7 +76,7 @@ def get_live_analysis(stock_name):
             config={'response_mime_type': 'application/json'}
         )
 
-        data = json.loads(response.text.strip())
+        data = json.loads(response.text.strip()) # 파이썬이 계산할 수 있는 딕셔너리형태로 변경
         if isinstance(data, list):
             data = data[0] if data else {}
 
@@ -96,13 +91,12 @@ def get_live_analysis(stock_name):
 
 
 def get_db_or_api_stock_news(stock_id, stock_name):
-    """
-    [웹 요청용] 종목 AI 분석 결과를 DB에서 조회합니다.
-    DB에 데이터가 없으면 실시간 분석(get_live_analysis)으로 대체합니다.
-
-    Returns:
-        news_list, score, ai_news
-    """
+    
+    # [웹 요청용] 종목 AI 분석 결과를 DB에서 조회합니다.
+    # DB에 데이터가 없으면 실시간 분석(get_live_analysis)으로 대체합니다.
+    # Returns:
+    #     news_list, score, ai_news
+    
     conn = get_conn()
     try:
         with conn.cursor() as cursor:
@@ -121,10 +115,10 @@ def get_db_or_api_stock_news(stock_id, stock_name):
 
 
 def update_all_stocks_ai_analysis():
-    """
-    [배치 전용] 전 종목 AI 분석을 일괄 실행해 DB에 저장합니다.
-    daily_update.py에서 매일 1회 호출합니다.
-    """
+    
+    # [배치 전용] 전 종목 AI 분석을 일괄 실행해 DB에 저장합니다.
+    # daily_update.py에서 매일 1회 호출합니다.
+    
     conn = get_conn()
     try:
         with conn.cursor() as cursor:

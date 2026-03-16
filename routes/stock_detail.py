@@ -42,10 +42,6 @@ def show_stock_chart(ticker):
 
     # 2. 종목 정보 및 시세 데이터 조회: 해당 티커에 맞는 주식 정보와 차트 데이터를 가져옵니다.
     stock   = get_stock(ticker)
-
-    # 2. 종목 기본 정보 조회
-    # 해당 티커(예: 064350)에 해당하는 종목 정보를 DB에서 가져옵니다.
-    stock = get_stock(ticker)
     if stock is None:
         abort(404) # 종목이 존재하지 않으면 404 에러 발생
 
@@ -175,7 +171,7 @@ def execute_trade():
     if quantity <= 0:
         return jsonify({"success": False, "message": "수량을 1주 이상 입력하세요."})
 
-    # 2. 거래 트랜잭션 시작: DB 연결 후 매수 또는 매도 로직을 안전하게 처리합니다.
+    # 2. 거래 트랜잭션 시작: DB 연결 후 매수 로직을 안전하게 처리합니다.
     conn = None
     try:
         conn = get_conn()
@@ -248,34 +244,6 @@ def execute_trade():
                 )
                 new_balance = float(account['current_balance']) - total_amount
 
-            elif trade_type == 'SELL':
-                # 매도 로직: 보유 수량 확인 후 잔액 증가 및 포트폴리오에서 수량을 차감하거나 삭제합니다.
-                cursor.execute(
-                    "SELECT quantity FROM portfolio_holdings WHERE user_id = %s AND stock_id = %s AND account_id = %s",
-                    (user_id, stock_id, account['id'])
-                )
-                holding = cursor.fetchone()
-                if not holding:
-                    return jsonify({"success": False, "message": "보유하지 않은 종목입니다."})
-                if holding['quantity'] < quantity:
-                    return jsonify({"success": False, "message": f"보유 수량 부족 (보유: {holding['quantity']}주)"})
-
-                cursor.execute(
-                    "UPDATE mock_accounts SET current_balance = current_balance + %s WHERE id = %s",
-                    (total_amount, account['id'])
-                )
-                if holding['quantity'] == quantity:
-                    cursor.execute(
-                        "DELETE FROM portfolio_holdings WHERE user_id = %s AND stock_id = %s AND account_id = %s",
-                        (user_id, stock_id, account['id'])
-                    )
-                else:
-                    cursor.execute(
-                        "UPDATE portfolio_holdings SET quantity = quantity - %s WHERE user_id = %s AND stock_id = %s AND account_id = %s",
-                        (quantity, user_id, stock_id, account['id'])
-                    )
-                new_balance = float(account['current_balance']) + total_amount
-
             else:
                 return jsonify({"success": False, "message": "잘못된 거래 유형입니다."})
 
@@ -307,7 +275,7 @@ def execute_trade():
         if conn:
             conn.close()
 
-# 오류 발생 시 모든 작업을 취소(되돌리기)합니다.
+
 @stock_detail_bp.route("/api/strategy/<ticker>")
 def strategy_api(ticker):
     # 전략 신호 및 백테스트 결과를 JSON으로 반환합니다.
