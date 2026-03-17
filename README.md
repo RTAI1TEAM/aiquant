@@ -172,7 +172,7 @@ python app.py
 ```
 
 ## ERD 다이어그램
-![ERD](static/erd.png)
+![ERD](static/images/erd.png)
 
 ## 홍보 포인트
 
