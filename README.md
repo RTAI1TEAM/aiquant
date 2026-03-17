@@ -132,25 +132,47 @@ DB_NAME=
 
 SECRET_KEY=
 
-GEMINI_API_KEY=
 NAVER_CLIENT_ID=
 NAVER_CLIENT_SECRET=
 
 MAIL_EMAIL=
 MAIL_PASSWORD=
+
+GEMINI_API_KEY=
+
+# GEMINI API 여러개 사용 시 다음 변수도 사용 수 만큼 채워주세요
+# GEMINI_API_KEY_1=
+# GEMINI_API_KEY_2=
+# GEMINI_API_KEY_3=
+# GEMINI_API_KEY_4=
+# GEMINI_API_KEY_5=
+
 ```
 
-### 3. 애플리케이션 실행
+### 3. 데이터베이스 테이블 생성
+```bash
+python -m mariadb.create_db
+```
+
+### 4. 데이터베이스 기본 데이터 추가
+```bash
+python -m mariadb.add_datas
+```
+
+### 5. 일일 배치 실행
+
+```bash
+python scripts/daily_update.py
+```
+
+### 6. 애플리케이션 실행
 
 ```bash
 python app.py
 ```
 
-### 4. 일일 배치 실행
-
-```bash
-python scripts/daily_update.py
-```
+## ERD 다이어그램
+![ERD](static/erd.png)
 
 ## 홍보 포인트
 
