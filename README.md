@@ -87,7 +87,7 @@ AI Quant Defense Stock Dashboard는 이 문제를 아래 방식으로 해결합�
 ## 프로젝트 구조
 
 ```text
-defense-stock-dashboard/
+aiquant/
 ├─ app.py
 ├─ config.py
 ├─ database.py
